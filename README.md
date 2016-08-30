@@ -1,0 +1,2 @@
+# mg
+Mailgun API Wrapper
