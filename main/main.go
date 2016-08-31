@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/cagnosolutions/mg"
 )
@@ -13,12 +14,15 @@ type User struct {
 }
 
 func main() {
+	mg.DOMAIN = "api.mailgun.net/v3/sandbox73d66ccb60f948708fcaf2e2d1b3cd4c.mailgun.org"
+	mg.KEY = "key-173701b40541299bd3b7d40c3ac6fd43"
 
 	user := User{
 		Name:   "Greg Pechiro",
 		Age:    30,
 		Active: true,
 	}
+
 	body, err := mg.Body("email.tmpl", map[string]interface{}{"user": user})
 
 	if err != nil {
@@ -34,6 +38,9 @@ func main() {
 		BCC:     []string{"scottiecagno@gmail.com"},
 	}
 	r, err := mg.SendEmail(email)
+	if err == mg.API {
+		log.Panic("Please set API domain and key")
+	}
 	if err != nil {
 		panic(err)
 	}

@@ -1,6 +1,7 @@
 package mg
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -8,9 +9,11 @@ import (
 	"net/url"
 )
 
-var DOMAIN = "api.mailgun.net/v3/sandbox73d66ccb60f948708fcaf2e2d1b3cd4c.mailgun.org"
-var KEY = "key-173701b40541299bd3b7d40c3ac6fd43"
+var DOMAIN = ""
+var KEY = ""
 var ENDPOINT = "https://api:" + KEY + "@" + DOMAIN + "/messages"
+
+var API = errors.New("No KEY or DOMAIN is set")
 
 type Email struct {
 	To      []string
@@ -29,6 +32,10 @@ func Send(To string, From string, Subject string, HTML string, BCC ...string) (s
 	vals.Add("subject", Subject)
 	vals.Add("html", HTML)
 	vals["bcc"] = BCC
+
+	if KEY == "" || DOMAIN == "" {
+		return "", API
+	}
 
 	resp, err := http.PostForm(ENDPOINT, vals)
 	if err != nil {
@@ -57,6 +64,10 @@ func SendEmail(email Email) (string, error) {
 	vals.Add("subject", email.Subject)
 	vals.Add("text", email.Text)
 	vals.Add("html", email.HTML)
+
+	if KEY == "" || DOMAIN == "" {
+		return "", API
+	}
 
 	resp, err := http.PostForm(ENDPOINT, vals)
 	if err != nil {
