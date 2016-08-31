@@ -84,3 +84,13 @@ func SendEmail(email Email) (string, error) {
 
 	return fmt.Sprintf("%s", body), nil
 }
+
+func SetCredentials(domain, key string) {
+	if domain != "" {
+		DOMAIN = domain
+	}
+	if key != "" {
+		KEY = key
+	}
+	ENDPOINT = "https://api:" + KEY + "@" + DOMAIN + "/messages"
+}
