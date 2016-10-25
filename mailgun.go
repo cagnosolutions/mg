@@ -14,6 +14,7 @@ var KEY = ""
 var ENDPOINT = "https://api:" + KEY + "@" + DOMAIN
 
 var API = errors.New("No KEY or DOMAIN is set")
+var TO = errors.New("No email addres is set")
 
 type Email struct {
 	To      []string
@@ -26,18 +27,20 @@ type Email struct {
 	Tags    []string
 }
 
-func Send(To string, From string, Subject string, HTML string, Tags []string, BCC ...string) (string, error) {
-	vals := make(url.Values, 0)
-	vals.Add("to", To)
-	vals.Add("from", From)
-	vals.Add("subject", Subject)
-	vals.Add("html", HTML)
-	vals["bcc"] = BCC
-	vals["o:tag"] = Tags
-
+func Send(to string, from string, subject string, html string, tags []string, bcc ...string) (string, error) {
 	if KEY == "" || DOMAIN == "" {
 		return "", API
 	}
+	if to == "" {
+		return "", TO
+	}
+	vals := make(url.Values, 0)
+	vals.Add("to", to)
+	vals.Add("from", from)
+	vals.Add("subject", subject)
+	vals.Add("html", html)
+	vals["bcc"] = bcc
+	vals["o:tag"] = tags
 
 	resp, err := http.PostForm(ENDPOINT+"/messages", vals)
 	if err != nil {
@@ -56,9 +59,14 @@ func Send(To string, From string, Subject string, HTML string, Tags []string, BC
 }
 
 func SendEmail(email Email) (string, error) {
+	if KEY == "" || DOMAIN == "" {
+		return "", API
+	}
+	if len(email.To) < 1 {
+		return "", TO
+	}
 
 	vals := make(url.Values, 0)
-
 	vals["to"] = email.To
 	vals["cc"] = email.CC
 	vals["bcc"] = email.BCC
@@ -68,11 +76,7 @@ func SendEmail(email Email) (string, error) {
 	vals.Add("text", email.Text)
 	vals.Add("html", email.HTML)
 
-	fmt.Println(vals.Get("o:tag"))
-
-	if KEY == "" || DOMAIN == "" {
-		return "", API
-	}
+	// fmt.Println(vals.Get("o:tag"))
 
 	resp, err := http.PostForm(ENDPOINT+"/messages", vals)
 	if err != nil {

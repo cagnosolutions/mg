@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"log"
+	"html/template"
 
 	"github.com/cagnosolutions/mg"
 )
@@ -15,36 +15,43 @@ type User struct {
 
 var DOMAIN = "api.mailgun.net/v3/sandbox73d66ccb60f948708fcaf2e2d1b3cd4c.mailgun.org"
 var KEY = "key-173701b40541299bd3b7d40c3ac6fd43"
+var funcs template.FuncMap = template.FuncMap{
+	"helloWorld": func() string {
+		return "hello world"
+	},
+}
 
 func main() {
 
 	mg.SetCredentials(DOMAIN, KEY)
 
-	// user := User{
-	// 	Name:   "Greg Pechiro",
-	// 	Age:    30,
-	// 	Active: true,
-	// }
-	//
-	// //body, err := mg.BodyFile("email.tmpl", map[string]interface{}{"user": user})
-	// body, err := mg.Body(email, map[string]interface{}{"user": user})
-	//
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// //r, err := mg.Send("gregpechiro@gmail.com", "Totally not a virus or spam <info@test.com>", "TEST EMAIL", body, "gregpechiro@yahoo.com", "scottiecagno@gmaio.com", "cagnosolutions@gmail.com")
-	// email := mg.Email{
-	// 	To:      []string{"gregpechiro@gmail.com"},
-	// 	From:    "Not a virus or spam <info@test.com>",
-	// 	Subject: "Totally not a virus or spam... I promise",
-	// 	HTML:    body,
-	// 	//CC:      []string{"gregpechiro@yahoo.com", "cagnosolutions@gmail.com"},
-	// 	//BCC:     []string{"scottiecagno@gmail.com"},
-	// 	Tags: []string{"company-1234"},
-	// }
-	// r, err := mg.SendEmail(email)
+	user := User{
+		Name:   "Greg Pechiro",
+		Age:    30,
+		Active: true,
+	}
 
-	r, err := mg.GetTag("company:1234")
+	body, err := mg.BodyFile("email.tmpl", map[string]interface{}{"user": user}, funcs)
+	// body, err := mg.Body(email, map[string]interface{}{"user": user})
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(body)
+
+	//r, err := mg.Send("gregpechiro@gmail.com", "Totally not a virus or spam <info@test.com>", "TEST EMAIL", body, "gregpechiro@yahoo.com", "scottiecagno@gmaio.com", "cagnosolutions@gmail.com")
+
+	/*email := mg.Email{
+		To:      []string{"gregpechiro@gmail.com"},
+		From:    "Not a virus or spam <info@test.com>",
+		Subject: "Totally not a virus or spam... I promise",
+		HTML:    body,
+		//CC:      []string{"gregpechiro@yahoo.com", "cagnosolutions@gmail.com"},
+		//BCC:     []string{"scottiecagno@gmail.com"},
+		Tags: []string{"company-1234"},
+	}
+	r, err := mg.SendEmail(email)*/
+
+	/*r, err := mg.GetTag("company:1234")
 
 	if err == mg.API {
 		log.Panic("Please set API domain and key")
@@ -52,7 +59,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("%s", r)
+	fmt.Printf("%s", r)*/
 
 }
 
