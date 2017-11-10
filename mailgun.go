@@ -17,14 +17,14 @@ var API = errors.New("No KEY or DOMAIN is set")
 var TO = errors.New("No email addres is set")
 
 type Email struct {
-	To      []string
-	From    string
-	CC      []string
-	BCC     []string
-	Subject string
-	Text    string
-	HTML    string
-	Tags    []string
+	To      []string `json:"to,omitempty"`
+	From    string   `json:"from,omitempty"`
+	CC      []string `json:"cc,omitempty"`
+	BCC     []string `json:"bcc,omitempty"`
+	Subject string   `json:"subject,omitempty"`
+	Text    string   `json:"text,omitempty"`
+	HTML    string   `json:"html,omitempty"`
+	Tags    []string `json:"tags,omitempty"`
 }
 
 func Send(to string, from string, subject string, html string, tags []string, bcc ...string) (string, error) {
